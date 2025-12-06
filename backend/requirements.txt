@@ -1,6 +1,0 @@
-fastapi
-uvicorn[standard]
-python-dotenv
-pydantic
-qdrant-client
-google-genai # For Gemini API

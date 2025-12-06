@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git rev-parse:*)",
+      "Bash(.specify/scripts/bash/check-prerequisites.sh:*)",
+      "Bash(test:*)",
+      "Bash(npm run start)",
+      "Bash(mkdir:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

@@ -1274,21 +1274,31 @@
 
 // add gemini rag chatbot still not  working 
 
-import { useState, useEffect, useRef } from 'react'; // useRef added
-import { Book, Bot, Cpu, Eye, Zap, Rocket, Brain, Code, MessageSquare, Send, X, User } from 'lucide-react'; // Chat icons added
+import { useState, useEffect, useRef } from 'react';
+import { Book, Bot, Cpu, Eye, Zap, Rocket, Brain, Code, MessageSquare, Send, X, User } from 'lucide-react';
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import Layout from '@theme/Layout';
-import Heading from '@theme/Heading';
 import Link from '@docusaurus/Link';
 import clsx from 'clsx';
 
-// IMPORTANT: Ensure styles.module.css is in the same directory as this file.
-import styles from './styles.module.css'; 
+import styles from './styles.module.css';
 
-// RAG Chatbot Backend API Endpoint
-const API_ENDPOINT = 'http://localhost:8000/chat'; 
+// RAG Chatbot API
+const API_ENDPOINT = 'http://localhost:8000/chat';
 
-// --- Module Card Component (Reusable) ---
+// Modules Data
+const modules = [
+  { icon: Zap, title: 'Physical AI Foundations', weeks: 'Weeks 1-2', description: 'Introduction to embodied intelligence, from digital AI to robots that understand physical laws.', topics: ['What is Physical AI', 'Sensor Systems (LiDAR, Cameras, IMUs)', 'Humanoid Robotics Landscape'], colorClass: 'colorBlue', link: '/docs/weeks-1-2-physical-ai/introduction' },
+  { icon: Cpu, title: 'ROS 2 - Robotic Nervous System', weeks: 'Weeks 3-5', description: 'Master the middleware that powers modern robots. Learn nodes, topics, services, and actions.', topics: ['ROS 2 Architecture & DDS', 'Publishers & Subscribers', 'Python Package Development'], colorClass: 'colorPurple', link: '/docs/module-01-ros2/introduction' },
+  { icon: Eye, title: 'Digital Twin - Gazebo & Unity', weeks: 'Weeks 6-7', description: 'Build photorealistic simulations and test robots in virtual environments before deployment.', topics: ['Physics Simulation', 'Sensor Simulation', 'URDF Robot Description'], colorClass: 'colorGreen', link: '/docs/module-02-digital-twin/introduction' },
+  { icon: Brain, title: 'NVIDIA Isaac - AI Robot Brain', weeks: 'Weeks 8-10', description: 'Leverage NVIDIA Isaac for photorealistic simulation, synthetic data, and hardware-accelerated AI.', topics: ['Isaac Sim & Omniverse', 'Visual SLAM & Navigation', 'Sim-to-Real Transfer'], colorClass: 'colorOrange', link: '/docs/module-03-nvidia-isaac/introduction' },
+  { icon: Zap, title: 'Vision-Language-Action', weeks: 'Weeks 11-12', description: 'Integrate GPT models with robotics. Convert natural language commands into robot actions.', topics: ['Voice Commands (Whisper)', 'LLM Task Planning', 'Multimodal Interaction'], colorClass: 'colorRed', link: '/docs/module-04-vla/introduction' },
+  { icon: Bot, title: 'Advanced Humanoid Development', weeks: 'Week 13', description: 'Master bipedal locomotion, manipulation, and human-robot interaction design.', topics: ['Kinematics & Dynamics', 'Balance Control', 'Whole-Body Control'], colorClass: 'colorIndigo', link: '/docs/week-13-humanoid/introduction' },
+  { icon: Rocket, title: 'Capstone Project', weeks: 'Final Project', description: 'Build an autonomous humanoid that responds to voice, navigates, and manipulates objects.', topics: ['Voice-to-Action Pipeline', 'Path Planning & Navigation', 'Computer Vision Integration'], colorClass: 'colorCyan', link: '/docs/capstone/overview' },
+  { icon: Code, title: 'Hardware Guide', weeks: 'Reference', description: 'Complete guide to hardware requirements from GPUs to edge computing and robot platforms.', topics: ['RTX Workstation Setup', 'Jetson Edge Computing', 'Robot Options & Budget'], colorClass: 'colorGray', link: '/docs/hardware/overview' },
+];
+
+// Module Card Component
 function ModuleCard({ module, index }) {
   const [isHovered, setIsHovered] = useState(false);
   return (
@@ -1322,19 +1332,7 @@ function ModuleCard({ module, index }) {
   );
 }
 
-// --- Modules Data ---
-const modules = [
-  { icon: Zap, title: 'Physical AI Foundations', weeks: 'Weeks 1-2', description: 'Introduction to embodied intelligence, from digital AI to robots that understand physical laws.', topics: ['What is Physical AI', 'Sensor Systems (LiDAR, Cameras, IMUs)', 'Humanoid Robotics Landscape'], colorClass: 'colorBlue', link: '/docs/weeks-1-2-physical-ai/introduction' },
-  { icon: Cpu, title: 'ROS 2 - Robotic Nervous System', weeks: 'Weeks 3-5', description: 'Master the middleware that powers modern robots. Learn nodes, topics, services, and actions.', topics: ['ROS 2 Architecture & DDS', 'Publishers & Subscribers', 'Python Package Development'], colorClass: 'colorPurple', link: '/docs/module-01-ros2/introduction' },
-  { icon: Eye, title: 'Digital Twin - Gazebo & Unity', weeks: 'Weeks 6-7', description: 'Build photorealistic simulations and test robots in virtual environments before deployment.', topics: ['Physics Simulation', 'Sensor Simulation', 'URDF Robot Description'], colorClass: 'colorGreen', link: '/docs/module-02-digital-twin/introduction' },
-  { icon: Brain, title: 'NVIDIA Isaac - AI Robot Brain', weeks: 'Weeks 8-10', description: 'Leverage NVIDIA Isaac for photorealistic simulation, synthetic data, and hardware-accelerated AI.', topics: ['Isaac Sim & Omniverse', 'Visual SLAM & Navigation', 'Sim-to-Real Transfer'], colorClass: 'colorOrange', link: '/docs/module-03-nvidia-isaac/introduction' },
-  { icon: Zap, title: 'Vision-Language-Action', weeks: 'Weeks 11-12', description: 'Integrate GPT models with robotics. Convert natural language commands into robot actions.', topics: ['Voice Commands (Whisper)', 'LLM Task Planning', 'Multimodal Interaction'], colorClass: 'colorRed', link: '/docs/module-04-vla/introduction' },
-  { icon: Bot, title: 'Advanced Humanoid Development', weeks: 'Week 13', description: 'Master bipedal locomotion, manipulation, and human-robot interaction design.', topics: ['Kinematics & Dynamics', 'Balance Control', 'Whole-Body Control'], colorClass: 'colorIndigo', link: '/docs/week-13-humanoid/introduction' },
-  { icon: Rocket, title: 'Capstone Project', weeks: 'Final Project', description: 'Build an autonomous humanoid that responds to voice, navigates, and manipulates objects.', topics: ['Voice-to-Action Pipeline', 'Path Planning & Navigation', 'Computer Vision Integration'], colorClass: 'colorCyan', link: '/docs/capstone/overview' },
-  { icon: Code, title: 'Hardware Guide', weeks: 'Reference', description: 'Complete guide to hardware requirements from GPUs to edge computing and robot platforms.', topics: ['RTX Workstation Setup', 'Jetson Edge Computing', 'Robot Options & Budget'], colorClass: 'colorGray', link: '/docs/hardware/overview' },
-];
-
-// --- RAG Chatbot Component (Integrated into this file) ---
+// Chatbot Component
 function ChatbotComponent() {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState([]);
@@ -1342,172 +1340,105 @@ function ChatbotComponent() {
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef(null);
 
-  // Scroll to bottom of chat window
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
-  // Initial welcome message and scroll on message change
   useEffect(() => {
     setMessages([{
-        id: Date.now(),
-        text: "Hello! I'm the Physical AI RAG Bot. Ask me anything about the course curriculum!",
-        sender: 'bot',
-        timestamp: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
+      id: Date.now(),
+      text: "Hello! I'm the Physical AI RAG Bot. Ask me anything about the course curriculum!",
+      sender: 'bot',
+      timestamp: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
     }]);
   }, []);
-  
+
   useEffect(scrollToBottom, [messages]);
 
   const handleSendMessage = async (e) => {
     e.preventDefault();
     if (!input.trim() || isLoading) return;
 
-    const currentInput = input;
-    const newMessage = {
-      id: Date.now(),
-      text: currentInput,
-      sender: 'user',
-      timestamp: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
-    };
-
-    setMessages((prev) => [...prev, newMessage]);
+    const userMsg = { id: Date.now(), text: input, sender: 'user', timestamp: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }) };
+    setMessages(prev => [...prev, userMsg]);
     setInput('');
     setIsLoading(true);
 
     try {
-      const response = await fetch(API_ENDPOINT, {
+      const res = await fetch(API_ENDPOINT, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ message: currentInput }),
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: input }),
       });
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const data = await response.json();
-
-      const botResponse = {
-        id: Date.now() + 1,
-        text: data.response || "Sorry, I couldn't find an answer. The backend might not have the relevant context (RAG data).",
-        sender: 'bot',
-        timestamp: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
-      };
-
-      setMessages((prev) => [...prev, botResponse]);
-    } catch (error) {
-      console.error('Chatbot error:', error);
-      const errorResponse = {
-        id: Date.now() + 1,
-        text: `Error connecting to the RAG backend (http://localhost:8000). Is the server running?`,
-        sender: 'bot',
-        timestamp: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
-      };
-      setMessages((prev) => [...prev, errorResponse]);
+      const data = await res.json();
+      const botMsg = { id: Date.now() + 1, text: data.response || "No answer found.", sender: 'bot', timestamp: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }) };
+      setMessages(prev => [...prev, botMsg]);
+    } catch (err) {
+      setMessages(prev => [...prev, { id: Date.now() + 1, text: "Error: Is backend running on localhost:8000?", sender: 'bot', timestamp: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }) }]);
     } finally {
       setIsLoading(false);
     }
   };
 
-  // NOTE: Styling classes (styles.chatWindow, styles.userBubble, etc.) 
-  // must be added to your existing './styles.module.css' for the chatbot to look correct. 
-  // I will provide the required CSS additions below this file.
-
   return (
-    <>
-      <div className={styles.chatbotContainer}>
-        {/* Chat Button (Always visible) */}
-        <button 
-          className={clsx(styles.chatButton, styles.colorBlue)} 
-          onClick={() => setIsOpen(!isOpen)}
-        >
-          {isOpen ? <X size={24} /> : <MessageSquare size={24} />}
-        </button>
+    <div className={styles.chatbotContainer}>
+      <button className={clsx(styles.chatButton, styles.colorBlue)} onClick={() => setIsOpen(!isOpen)}>
+        {isOpen ? <X size={24} /> : <MessageSquare size={24} />}
+      </button>
 
-        {/* Chat Window (Conditionally visible) */}
-        {isOpen && (
-          <div className={styles.chatWindow}>
-            <div className={clsx(styles.chatHeader, styles.colorBlue)}>
-              <div className={styles.chatHeaderTitle}>
-                <Bot size={20} className={styles.chatHeaderIcon}/>
-                Physical AI RAG Chatbot
-              </div>
-              <button className={styles.closeButton} onClick={() => setIsOpen(false)}>
-                <X size={16} />
-              </button>
+      {isOpen && (
+        <div className={styles.chatWindow}>
+          <div className={clsx(styles.chatHeader, styles.colorBlue)}>
+            <div className={styles.chatHeaderTitle}>
+              <Bot size={20} className={styles.chatHeaderIcon} />
+              Physical AI RAG Bot
             </div>
-            
-            <div className={styles.chatMessages}>
-              {messages.map((msg) => (
-                <div key={msg.id} className={clsx(styles.messageRow, msg.sender === 'user' ? styles.userRow : styles.botRow)}>
-                  <div className={clsx(styles.messageBubble, msg.sender === 'user' ? styles.userBubble : styles.botBubble)}>
-                    <div className={styles.messageIcon}>
-                        {msg.sender === 'user' ? <User size={14} /> : <Bot size={14} />}
-                    </div>
-                    <div className={styles.messageText}>{msg.text}</div>
-                    <div className={styles.messageTimestamp}>{msg.timestamp}</div>
-                  </div>
-                </div>
-              ))}
-              {isLoading && (
-                <div className={clsx(styles.messageRow, styles.botRow)}>
-                  <div className={clsx(styles.messageBubble, styles.botBubble)}>
-                    <div className={styles.messageIcon}><Bot size={14} /></div>
-                    <div className={styles.loadingDots}>
-                        <span>.</span><span>.</span><span>.</span>
-                    </div>
-                  </div>
-                </div>
-              )}
-              <div ref={messagesEndRef} />
-            </div>
-
-            <form onSubmit={handleSendMessage} className={styles.chatInputForm}>
-              <input
-                type="text"
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                placeholder="Ask about ROS 2, Isaac, or modules..."
-                className={styles.chatInputField}
-                disabled={isLoading}
-              />
-              <button type="submit" className={clsx(styles.sendButton, styles.colorBlue)} disabled={isLoading}>
-                <Send size={20} />
-              </button>
-            </form>
+            <button className={styles.closeButton} onClick={() => setIsOpen(false)}><X size={16} /></button>
           </div>
-        )}
-      </div>
-    </>
+
+          <div className={styles.chatMessages}>
+            {messages.map(msg => (
+              <div key={msg.id} className={clsx(styles.messageRow, msg.sender === 'user' ? styles.userRow : styles.botRow)}>
+                <div className={clsx(styles.messageBubble, msg.sender === 'user' ? styles.userBubble : styles.botBubble)}>
+                  <div className={styles.messageIcon}>{msg.sender === 'user' ? <User size={14} /> : <Bot size={14} />}</div>
+                  <div>{msg.text}</div>
+                  <div className={styles.messageTimestamp}>{msg.timestamp}</div>
+                </div>
+              </div>
+            ))}
+            {isLoading && (
+              <div className={clsx(styles.messageRow, styles.botRow)}>
+                <div className={clsx(styles.messageBubble, styles.botBubble)}>
+                  <div className={styles.messageIcon}><Bot size={14} /></div>
+                  <div className={styles.loadingDots}><span>.</span><span>.</span><span>.</span></div>
+                </div>
+              </div>
+            )}
+            <div ref={messagesEndRef} />
+          </div>
+
+          <form onSubmit={handleSendMessage} className={styles.chatInputForm}>
+            <input type="text" value={input} onChange={e => setInput(e.target.value)} placeholder="Ask about the course..." className={styles.chatInputField} disabled={isLoading} />
+            <button type="submit" className={clsx(styles.sendButton, styles.colorBlue)} disabled={isLoading}><Send size={20} /></button>
+          </form>
+        </div>
+      )}
+    </div>
   );
 }
-// --- RAG Chatbot Component End ---
 
-
-// --- Main Landing Page Component (PhysicalAILanding) ---
+// Main Landing Page
 function PhysicalAILanding() {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [scrollY, setScrollY] = useState(0);
 
   useEffect(() => {
-    // Mouse move effect for floating robot
-    const handleMouseMove = (event) => {
-      setMousePosition({ x: event.clientX, y: event.clientY });
-    };
-
-    // Scroll effect
-    const handleScroll = () => {
-        setScrollY(window.scrollY);
-    };
-
-    document.addEventListener('mousemove', handleMouseMove);
+    const handleMouse = (e) => setMousePosition({ x: e.clientX, y: e.clientY });
+    const handleScroll = () => setScrollY(window.scrollY);
+    document.addEventListener('mousemove', handleMouse);
     window.addEventListener('scroll', handleScroll);
-
     return () => {
-      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mousemove', handleMouse);
       window.removeEventListener('scroll', handleScroll);
     };
   }, []);
@@ -1515,59 +1446,56 @@ function PhysicalAILanding() {
   return (
     <div className={styles.landing}>
       {/* Floating Robot */}
-      <div
-        className={styles.floatingRobot}
-        style={{
-          left: mousePosition.x / 50,
-          top: mousePosition.y / 50 + scrollY / 10,
-        }}
-      >
+      <div className={styles.floatingRobot} style={{ left: mousePosition.x / 50, top: mousePosition.y / 50 + scrollY / 10 }}>
         <Bot size={256} />
       </div>
-      
-      {/* Hero Section */}
+
+      {/* HERO SECTION – PERFECTLY CENTERED */}
       <section className={styles.hero}>
-        {/* ... (Hero Content is unchanged) ... */}
         <div className={styles.heroContent}>
-          <div className={styles.heroTextContent}> 
-            <h1 className={styles.titleStatic}>Physical AI & Humanoid Robotics</h1> 
+          {/* Title */}
+          <div className={styles.heroTextContent}>
+            <h1 className={styles.title}>Physical AI & Humanoid Robotics</h1>
             <p className={styles.subtitle}>
               Master the art of building intelligent robots that understand and interact with the physical world
             </p>
           </div>
+
+          {/* Image + Buttons + Stats (All Centered) */}
           <div className={styles.heroRightContent}>
             <div className={styles.heroImageContainer}>
-              <img 
-                src="https://www.tlciscreative.com/wp-content/uploads/2025/03/A_futuristic_humanoid_robot_with_electronic_skin.jpg" 
-                alt="Physical AI & Humanoid Robotics Illustration" 
-                className={styles.heroImage} 
+              <img
+                src="https://www.tlciscreative.com/wp-content/uploads/2025/03/A_futuristic_humanoid_robot_with_electronic_skin.jpg"
+                alt="Physical AI Robot"
+                className={styles.heroImage}
               />
             </div>
-            <div className={styles.ctaButtons}>
-              <Link to="/docs/intro" className={styles.primaryButton}>
-                Start Learning <Rocket size={20} />
-              </Link>
-              <a href="#modules" className={styles.secondaryButton}>
-                View Modules
-              </a>
-            </div>
-            <div className={styles.stats}>
-              {[
-                { icon: Book, label: 'Chapters', value: '60+' },
-                { icon: Code, label: 'Code Examples', value: '100+' },
-                { icon: Brain, label: 'AI Concepts', value: '50+' },
-                { icon: Zap, label: 'Hands-on Labs', value: '30+' },
-              ].map((stat, i) => (
-                <div key={i} className={styles.statCard}>
-                  <stat.icon size={32} />
-                  <div className={styles.statValue}>{stat.value}</div>
-                  <div className={styles.statLabel}>{stat.label}</div>
-                </div>
-              ))}
-            </div>
+
+            {/* ===== BUTTONS + STATS – AB 100% CENTER MEIN ===== */}
+<div className={styles.ctaButtons}>
+  <Link to="/docs/intro" className={styles.primaryButton}>
+    Start Learning <Rocket size={22} />
+  </Link>
+  <a href="#modules" className={styles.secondaryButton}>
+    View Modules
+  </a>
+</div>
+
+<div className={styles.stats}>
+  {[
+    { icon: Book, value: '60+', label: 'Chapters' },
+    { icon: Code, value: '100+', label: 'Code Examples' },
+    { icon: Brain, value: '50+', label: 'AI Concepts' },
+    { icon: Zap, value: '30+', label: 'Hands-on Labs' },
+  ].map((stat, i) => (
+    <div key={i} className={styles.statCard}>
+      <stat.icon size={42} color="#c4b5fd" />
+      <div className={styles.statValue}>{stat.value}</div>
+      <div className={styles.statLabel}>{stat.label}</div>
+    </div>
+  ))}
+</div>
           </div>
-        </div>
-        <div className={styles.scrollIndicator}>
         </div>
       </section>
 
@@ -1575,9 +1503,7 @@ function PhysicalAILanding() {
       <section id="modules" className={styles.modules}>
         <div className={styles.modulesContent}>
           <h2 className={styles.modulesTitle}>Course Modules</h2>
-          <p className={styles.modulesSubtitle}>
-            13 weeks of comprehensive learning from basics to advanced robotics
-          </p>
+          <p className={styles.modulesSubtitle}>13 weeks of comprehensive learning from basics to advanced robotics</p>
           <div className={styles.modulesGrid}>
             {modules.map((module, i) => (
               <ModuleCard key={i} module={module} index={i} />
@@ -1592,9 +1518,7 @@ function PhysicalAILanding() {
           <h2 className={styles.techStackTitle}>Technologies You'll Master</h2>
           <div className={styles.techTags}>
             {['ROS 2', 'Python', 'Gazebo', 'Unity', 'NVIDIA Isaac', 'OpenAI', 'PyTorch', 'Computer Vision'].map((tech, i) => (
-              <div key={i} className={styles.techTag}>
-                {tech}
-              </div>
+              <div key={i} className={styles.techTag}>{tech}</div>
             ))}
           </div>
         </div>
@@ -1605,30 +1529,22 @@ function PhysicalAILanding() {
         <div className={styles.ctaCard}>
           <h2>Ready to Build the Future?</h2>
           <p>Join thousands of students learning Physical AI and Humanoid Robotics</p>
-          <Link to="/docs/intro" className={styles.ctaButton}>
-            Start Your Journey Now →
-          </Link>
+          <Link to="/docs/intro" className={styles.ctaButton}>Start Your Journey Now →</Link>
         </div>
       </section>
-      
-      {/* 🤖 RAG Chatbot Component Added Here 🤖 */}
-      <ChatbotComponent />
 
+      {/* Chatbot */}
+      <ChatbotComponent />
     </div>
   );
 }
 
-
-// --- Docusaurus Home Page Wrapper (Using Layout for Navbar/Footer) ---
+// Docusaurus Wrapper
 export default function Home() {
   const { siteConfig } = useDocusaurusContext();
   return (
-    <Layout
-      title={`Home | ${siteConfig.title}`}
-      description="Master the art of building intelligent robots that understand and interact with the physical world"
-    >
+    <Layout title={`Home | ${siteConfig.title}`} description="Master Physical AI & Humanoid Robotics">
       <main>
-        {/* Your custom landing page component goes here */}
         <PhysicalAILanding />
       </main>
     </Layout>
